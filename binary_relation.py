@@ -14,9 +14,8 @@ class BinaryRelation(object):
         assert not isinstance(universe, int)
         assert isinstance(universe, list), "El universo debe ser una lista"
         assert isinstance(pairs, list), "La relación se debe pasar como una lista de pares"
-        assert all(isinstance(x, tuple) for x in pairs), "La relación se debe pasar como una lista de pares"
+        assert all(isinstance(x, tuple) or len(x)==2 for x in pairs), "La relación se debe pasar como una lista de pares"
         self.universe = sorted(universe)
-        self.pairs = sorted(pairs)
         self.universe_card = len(self.universe)
         self.matrix = numpy.zeros((self.universe_card, self.universe_card), 
                                   dtype=bool)
@@ -48,3 +47,11 @@ class BinaryRelation(object):
         'A==B no implica !(A!=B)'
         """
         return not self.__eq__(other)
+
+    def T(self):
+        """
+        La relacion transpuesta (i.e. (a,b) in B.T() si y solo si (b,a) in B)
+        """
+
+        pairs = numpy.argwhere(self.matrix.transpose()==True).tolist()
+        return BinaryRelation(self.universe, pairs)
