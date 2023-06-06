@@ -10,17 +10,21 @@ class BinaryRelation(object):
     matrices de transiciones.
     """
 
-    def __init__(self, universe, pairs, name=""):
+    def __init__(self, universe, pairs=None, matrix=None, name=""):
         assert not isinstance(universe, int)
         assert isinstance(universe, list), "El universo debe ser una lista"
-        assert isinstance(pairs, list), "La relación se debe pasar como una lista de pares"
-        assert all(isinstance(x, tuple) or len(x)==2 for x in pairs), "La relación se debe pasar como una lista de pares"
+        assert pairs or matrix, "la relación hay que cargarla por la lista de pares o la matriz"
+        if matrix:
+            self.matrix = matrix
+        elif pairs:
+            assert isinstance(pairs, list), "La relación se debe pasar como una lista de pares"
+            assert all(isinstance(x, tuple) or len(x)==2 for x in pairs), "La relación se debe pasar como una lista de pares"
+            self.matrix = numpy.zeros((self.universe_card, self.universe_card), 
+                                      dtype=bool)
+            for (i,j) in pairs:
+                self.matrix[i,j] = True
         self.universe = sorted(universe)
         self.universe_card = len(self.universe)
-        self.matrix = numpy.zeros((self.universe_card, self.universe_card), 
-                                  dtype=bool)
-        for (i,j) in pairs:
-            self.matrix[i,j] = True
         self.name = name
         self.class_name = type(self).__name__
     
@@ -52,6 +56,27 @@ class BinaryRelation(object):
         """
         La relacion transpuesta (i.e. (a,b) in B.T() si y solo si (b,a) in B)
         """
+        return BinaryRelation(self.universe, matrix=self.matrix.T)
 
-        pairs = numpy.argwhere(self.matrix.transpose()==True).tolist()
-        return BinaryRelation(self.universe, pairs)
+    def intersection(self, other):
+        """
+        La relacion resultante de intersecar self con other
+        """
+        matrix = self.matrix * other.matrix
+        return BinaryRelation(self.universe, matrix=matrix)
+
+    def compose(self, other):
+        """
+        La relacion resultante de componer self con other
+        """
+        matrix = self.matrix @ other.matrix
+        return BinaryRelation(self.universe, matrix=matrix)
+
+
+def top_relation(universe):
+    pairs = [(a,b) for a in universe for b in universe]
+    return BinaryRelation(universe, pairs=pairs)
+
+def bottom_relation(universe):
+    pairs = [(a,a) for a in universe]
+    return BinaryRelation(universe, pairs=pairs)
