@@ -1,7 +1,7 @@
 import logging
 
 from folpy.utils.parser.parser import Parser
-
+from binary_relation import BinaryRelation
 
 
 if __name__ == "__main__":
@@ -17,4 +17,9 @@ if __name__ == "__main__":
 
     DM2 = DM * DM
 
-    logging.info("%s" % list(DM2.subuniverses()))
+    binary_relations = set()
+
+    for sub in DM2.subuniverses(proper=False):
+        binary_relations.add(BinaryRelation(DM.universe, pairs=sub))
+
+    logging.info("%s" % binary_relations)
