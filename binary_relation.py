@@ -16,8 +16,8 @@ class BinaryRelation(object):
         assert isinstance(universe, list), "El universo debe ser una lista"
         self.universe = sorted(universe)
         self.universe_card = len(self.universe)
-        assert pairs or matrix, "la relación hay que cargarla por la lista de pares o la matriz"
-        if matrix:
+        assert pairs != None or type(matrix) != type(None), "la relación hay que cargarla por la lista de pares o la matriz"
+        if type(matrix) != type(None):
             self.matrix = matrix
         elif pairs:
             assert isinstance(pairs, list), "La relación se debe pasar como una lista de pares"
@@ -63,31 +63,56 @@ class BinaryRelation(object):
         """
         La relación de orden dada por orden lexicográfico
         """
-        return not self.__eq__(other)
+        for self_row, other_row in zip(self.matrix, other.matrix):
+            for self_elem, other_elem in zip(self_row, other_row):
+                if self_elem < other_elem:
+                    return True
+                elif self_elem > other_elem:
+                    return False
+        return False
+    
+    def __le__(self, other):
+        return self < other or self == other
+    
+    def __gt__(self, other):
+        return other < self
+    
+    def __ge__(self, other):
+        return self > other or self == other
 
     def __mul__(self, other):
         """
         La relacion resultante de intersecar self con other
         """
-        return self.intersection(self, other)
+        return self.intersection(other)
 
     def __matmul__(self, other):
         """
         La relacion resultante de componer self con other
         """
-        return self.compose(self, other)
+        return self.compose(other)
 
     def __and__(self, other):
         """
         La relacion resultante de intersecar self con other
         """
-        return self.intersection(self, other)
+        return self.intersection(other)
 
     def T(self):
         """
         La relacion transpuesta (i.e. (a,b) in B.T() si y solo si (b,a) in B)
         """
         return BinaryRelation(self.universe, matrix=self.matrix.T)
+    
+    def repr_by_T(self):
+        """
+        Devuelve la relación binaria representante entre `self` y su transpuesta
+        Es la menor entre las 2
+        """
+        t = self.T()
+        if t < self:
+            return t
+        return self
 
     def intersection(self, other):
         """
@@ -112,23 +137,44 @@ def bottom_relation(universe):
     pairs = [(a,a) for a in universe]
     return BinaryRelation(universe, pairs=pairs)
 
-# def rel_clousure(rel):
-#     """
-#     Obtiene el conjunto de relaciones binarias que es la clausura de `rel` con 
-#     las operaciones T, @ y *
-#     """
-#     universe = rel.universe
-#     clausure_set = {bottom_relation(universe), top_relation(universe), rel}
-#     new_rels = clausure_set.copy()
-#     new_new_rels = set()
+def one_rel_closure(rel):
+    """
+    Obtiene el conjunto de relaciones binarias que es la clausura de `rel` con 
+    las operaciones T, @ y *
+    """
+    universe = rel.universe
+    initial_set = {bottom_relation(universe), 
+                   top_relation(universe), 
+                   rel, 
+                   rel.T()}
+    aux_set = initial_set.copy()
+    closure_set = set()
+    
+    while aux_set != set():
+        for old_rel in initial_set:
+            for new_rel in aux_set:
+                closure_set.add(old_rel * new_rel)
+                closure_set.add(old_rel @ new_rel)
+        initial_set = initial_set.union(aux_set)
+        aux_set = closure_set.difference(initial_set)
 
-#     while(new_rels != set()):
-#         for old_rel in clausure_set:
-#             for new_rel in new_rels:
-#                 intersection = old_rel * new_rel
-#                 composition = old_rel @ new_rel
-#                 new_new_rels.add(intersection)
-#                 new_new_rels.add(composition)
+    return closure_set
 
 
-#     return clausure_set
+def two_rels_closure(brs1, brs2):
+    """
+    Obtiene el conjunto de relaciones binarias que es la clausura de dos 
+    dos conjuntos clausurados de relaciones `brs1` `brs2` con las
+    operaciones T, @ y *
+    """
+    closure_set = set()
+    
+    while brs2 != set():
+        for br1 in brs1:
+            for br2 in brs2:
+                closure_set.add(br1 * br2)
+                closure_set.add(br1 @ br2)
+        brs1 = brs1.union(brs2)
+        brs2 = closure_set.difference(brs1)
+
+    return closure_set
