@@ -19,7 +19,9 @@ if __name__ == "__main__":
 
     binary_relations = set()
 
+    i=0
     for sub in DM2.subuniverses(proper=False):
-        binary_relations.add(BinaryRelation(DM.universe, pairs=sub))
-
-    logging.info("%s" % binary_relations)
+        br = BinaryRelation(DM.universe, pairs=sub)
+        binary_relations.add(br)
+        i += 1
+        logging.info("%s : %s %s" % (i, sub, br))

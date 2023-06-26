@@ -48,7 +48,7 @@ class BinaryRelation(object):
     def __eq__(self, other):
         if self.universe != other.universe:
             return False
-        if self.matrix != other.matrix:
+        if (self.matrix != other.matrix).any():
             return False
         return True
     
@@ -56,6 +56,12 @@ class BinaryRelation(object):
         """
         Triste necesidad para la antiintuitiva logica de python
         'A==B no implica !(A!=B)'
+        """
+        return not self.__eq__(other)
+    
+    def __lt__(self, other):
+        """
+        La relación de orden dada por orden lexicográfico
         """
         return not self.__eq__(other)
 
