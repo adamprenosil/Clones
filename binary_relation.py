@@ -1,6 +1,6 @@
 
 import numpy
-from itertools import chain
+from itertools import chain, product
 from folpy.utils import indent
 
 
@@ -34,8 +34,7 @@ class BinaryRelation(object):
             return "%s(name= %s)\n" % (self.class_name, self.name)
         else:
             result = self.class_name + "(\n"
-            result += indent(repr(self.universe) + ",\n")
-            result += indent(repr(self.matrix) + ",\n")
+            result += indent(repr(self.matrix))
             return result + ")"
 
     def __hash__(self):
@@ -155,26 +154,32 @@ def one_rel_closure(rel):
             for new_rel in aux_set:
                 closure_set.add(old_rel * new_rel)
                 closure_set.add(old_rel @ new_rel)
+                closure_set.add(new_rel @ old_rel)
         initial_set = initial_set.union(aux_set)
         aux_set = closure_set.difference(initial_set)
 
     return closure_set
 
 
-def two_rels_closure(brs1, brs2):
+def closure_of_union(brs1, brs2):
     """
     Obtiene el conjunto de relaciones binarias que es la clausura de dos 
     dos conjuntos clausurados de relaciones `brs1` `brs2` con las
     operaciones T, @ y *
     """
-    closure_set = set()
+    initial_set = brs1
+    aux_set = brs2.difference(brs1)
+    closure_set = brs1.copy()
     
-    while brs2 != set():
-        for br1 in brs1:
-            for br2 in brs2:
-                closure_set.add(br1 * br2)
-                closure_set.add(br1 @ br2)
-        brs1 = brs1.union(brs2)
-        brs2 = closure_set.difference(brs1)
+    while aux_set != set():
+        initial_set = initial_set.union(aux_set)
+        for old_or_new_rel, new_rel in product(initial_set, aux_set):
+            if old_or_new_rel != new_rel:
+                closure_set.add(old_or_new_rel * new_rel)
+                closure_set.add(old_or_new_rel @ new_rel)
+                closure_set.add(new_rel @ old_or_new_rel)
+            else:
+                closure_set.add(old_or_new_rel @ new_rel)
+        aux_set = closure_set.difference(initial_set)
 
     return closure_set

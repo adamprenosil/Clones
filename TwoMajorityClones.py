@@ -2,13 +2,13 @@ import logging
 
 from itertools import chain, combinations 
 from folpy.utils.parser.parser import Parser
-from binary_relation import BinaryRelation, one_rel_closure, two_rels_closure
+from binary_relation import BinaryRelation, one_rel_closure, closure_of_union, bottom_relation, top_relation
 
 
-def powerset(iterable):
-    "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+def powerset_from(iterable, n):
+    "powerset_from([1,2,3], 0) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
     s = list(iterable)
-    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+    return chain.from_iterable(combinations(s, r) for r in range(n, len(s)+1))
 
 if __name__ == "__main__":
     logging.basicConfig(
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     DM2 = DM * DM
 
     binary_relations = set()
-    lozetas = {}
+    losetas = {}
 
     i=0
     for sub in DM2.subuniverses(proper=False):
@@ -35,20 +35,21 @@ if __name__ == "__main__":
 
         if br == br.repr_by_T():
             closure = one_rel_closure(br)
-            if closure not in lozetas.values():
-                lozetas[br] = closure
+            if closure not in losetas.values():
+                losetas[br] = closure
     
     
-    logging.info("%s : %s" % ("Tamaño lozetas ", len(lozetas)))
+    logging.info("%s : %s" % ("Tamaño de losetas", [len(x) for x in losetas.values()]))
 
-    coclones = list(lozetas.values()).copy()
+    coclones = list(losetas.values()).copy()
 
-    for s in powerset(lozetas.values()):
-        closure = set()
+    for s in powerset_from(losetas.values(), 2):
+        closure = {bottom_relation(br.universe), top_relation(br.universe)}
         for x in s:
-            closure = two_rels_closure(closure, x)
+            closure = closure_of_union(x, closure)
             if closure not in coclones:
                 coclones.append(closure)
 
-    logging.info("%s : %s" % ("Tamaño coclones ", len(coclones)))
+    logging.info("%s : %s" % ("Tamaños de coclones", [len(x) for x in coclones]))
+    logging.info("%s : %s" % ("Cantidad de coclones", len(coclones)))
 
