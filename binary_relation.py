@@ -143,22 +143,9 @@ def one_rel_closure(rel):
     """
     universe = rel.universe
     initial_set = {bottom_relation(universe), 
-                   top_relation(universe), 
-                   rel, 
-                   rel.T()}
-    aux_set = initial_set.copy()
-    closure_set = set()
-    
-    while aux_set != set():
-        for old_rel in initial_set:
-            for new_rel in aux_set:
-                closure_set.add(old_rel * new_rel)
-                closure_set.add(old_rel @ new_rel)
-                closure_set.add(new_rel @ old_rel)
-        initial_set = initial_set.union(aux_set)
-        aux_set = closure_set.difference(initial_set)
+                   top_relation(universe)}
 
-    return closure_set
+    return closure_of_union(initial_set, {rel, rel.T()})
 
 
 def closure_of_union(brs1, brs2):
