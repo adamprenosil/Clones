@@ -3,6 +3,28 @@ from itertools import product
 
 from binary_relation import bottom_relation,top_relation
 
+def to_file(coclones, path):
+    """
+    Guarda un diccionario de coclones con la estructura de 
+        {generador: loseta}
+    en la ruta `path` en formato json
+    """
+    assert path[-5:] == ".json"
+
+    return True
+
+def from_file(path):
+    """
+    Obtiene un diccionario de coclones con la estructura de 
+        {generador: loseta}
+    de la ruta `path` en formato json
+    """
+    assert path[-5:] == ".json"
+
+    coclones = {}
+    return coclones
+
+
 def one_rel_closure(rel):
     """
     Obtiene el conjunto de relaciones binarias que es la clausura de `rel` con 
@@ -12,10 +34,10 @@ def one_rel_closure(rel):
     initial_set = {bottom_relation(universe), 
                    top_relation(universe)}
 
-    return closure_of_union(initial_set, {rel, rel.T()})
+    return closure_join(initial_set, {rel, rel.T()})
 
 
-def closure_of_union(brs1, brs2):
+def closure_join(brs1, brs2):
     """
     Obtiene el conjunto de relaciones binarias que es la clausura de dos 
     dos conjuntos clausurados de relaciones `brs1` `brs2` con las
@@ -37,6 +59,19 @@ def closure_of_union(brs1, brs2):
         aux_set = closure_set.difference(initial_set)
 
     return closure_set
+
+
+
+def generate_coclones_by_antichains(tiles):
+    generators = tiles.keys()
+    tiles_sets = tiles.values()
+    indexes = range(len(generators))
+
+    return coclones 
+
+
+
+
 
 def generate_key_list(generator, tiles, previous_set=None):
     if type(previous_set) != list:

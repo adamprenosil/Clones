@@ -126,7 +126,14 @@ class BinaryRelation(object):
         """
         matrix = self.matrix @ other.matrix
         return BinaryRelation(self.universe, matrix=matrix)
-
+    
+    def to_list(self):
+        """
+        Para convertir la relación a una lista, y poder guardarla en el disco
+        con json. Guarda la información de la matriz, con la función to_list
+        de numpy
+        """
+        return self.matrix.to_list()
 
 def top_relation(universe):
     pairs = [(a,b) for a in universe for b in universe]
