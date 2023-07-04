@@ -1,6 +1,6 @@
 
 import numpy
-from itertools import chain, product
+from itertools import chain
 from folpy.utils import indent
 
 
@@ -135,38 +135,3 @@ def top_relation(universe):
 def bottom_relation(universe):
     pairs = [(a,a) for a in universe]
     return BinaryRelation(universe, pairs=pairs)
-
-def one_rel_closure(rel):
-    """
-    Obtiene el conjunto de relaciones binarias que es la clausura de `rel` con 
-    las operaciones T, @ y *
-    """
-    universe = rel.universe
-    initial_set = {bottom_relation(universe), 
-                   top_relation(universe)}
-
-    return closure_of_union(initial_set, {rel, rel.T()})
-
-
-def closure_of_union(brs1, brs2):
-    """
-    Obtiene el conjunto de relaciones binarias que es la clausura de dos 
-    dos conjuntos clausurados de relaciones `brs1` `brs2` con las
-    operaciones T, @ y *
-    """
-    initial_set = brs1
-    aux_set = brs2.difference(brs1)
-    closure_set = brs1.copy()
-    
-    while aux_set != set():
-        initial_set = initial_set.union(aux_set)
-        for old_or_new_rel, new_rel in product(initial_set, aux_set):
-            if old_or_new_rel != new_rel:
-                closure_set.add(old_or_new_rel * new_rel)
-                closure_set.add(old_or_new_rel @ new_rel)
-                closure_set.add(new_rel @ old_or_new_rel)
-            else:
-                closure_set.add(old_or_new_rel @ new_rel)
-        aux_set = closure_set.difference(initial_set)
-
-    return closure_set
