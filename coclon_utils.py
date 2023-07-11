@@ -3,6 +3,25 @@ from itertools import product
 
 from binary_relation import bottom_relation,top_relation
 
+
+class Node(object):
+
+    def __init__(self, closed, incomparables, generators) -> None:
+        self.closed = closed
+        self.incomparables = incomparables
+        self.generators = generators
+    
+    def join(self, other):
+        closed = closure_join(self.closed, other.closed)
+        inc = [i for i in self.incomparables if i in other.incomparables and i not in closed]
+        gen = self.generators + other.generators
+
+        return Node(closed, inc, gen)
+
+    def copy(self):
+        from copy import deepcopy
+        return deepcopy(self)
+
 def to_file(coclones, path):
     """
     Guarda un diccionario de coclones con la estructura de 
@@ -10,8 +29,19 @@ def to_file(coclones, path):
     en la ruta `path` en formato json
     """
     assert path[-5:] == ".json"
+    coclones_list_format = {}
+    for key in coclones:
+        key_list = key.tolist()
+        coclon_set = [br.tolist() for br in coclones[key]]
+        coclones_list_format[key_list] = coclon_set
+    try:
+        import json
 
-    return True
+        with open(path, 'w') as fp:
+            json.dump(coclones_list_format, fp)
+        return path
+    except e:
+        return e
 
 def from_file(path):
     """
@@ -61,35 +91,34 @@ def closure_join(brs1, brs2):
     return closure_set
 
 
-
 def generate_coclones_by_antichains(tiles):
-    generators = tiles.keys()
-    tiles_sets = tiles.values()
-    indexes = range(len(generators))
+    generators = list(tiles.keys())
+    one_gen_nodes = {}
+    nodes_queue = []
+
+    while generators:
+        g = generators.pop(0)
+        incomparables = [x for x in generators if not (x in tiles[g] or g in tiles[x])]
+        node = Node(tiles[g], incomparables, [g])
+        one_gen_nodes[g] = node
+        nodes_queue.append(node.copy())
+    
+    coclones = list(tiles.values())
+
+    i = 0
+    while nodes_queue:
+        node = nodes_queue.pop(0)
+        while node.incomparables:
+            g = node.incomparables.pop(0)
+            new_node = node.join(one_gen_nodes[g])
+            if new_node.closed not in coclones:
+                if new_node.incomparables:
+                    nodes_queue.append(new_node)
+                coclones.append(new_node.closed)
+                print(len(nodes_queue), len(coclones), len(new_node.generators))
+            else:
+                i += 1
+                if i % 10 == 0:
+                    print(i)
 
     return coclones 
-
-
-
-
-
-def generate_key_list(generator, tiles, previous_set=None):
-    if type(previous_set) != list:
-        previous_set = tiles.keys()
-    result = [i for i in previous_set if i not in tiles[generator]]
-
-    return result
-
-def generate_coclones_by_antichains(tiles):
-    generators = tiles.keys()
-    two_br_generator = [i for i in generators if len(tiles[i]) == 2][0]
-    two_br_generator_key_list = generate_key_list(two_br_generator, tiles)
-    coclones = {two_br_generator_key_list: tiles[two_br_generator]}
-    
-    initial_set = coclones.copy()
-    aux_set = tiles.copy().pop(two_br_generator)
-
-    while aux_set:
-        pass
-
-    return coclones
