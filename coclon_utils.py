@@ -15,7 +15,6 @@ class Node(object):
         closed = closure_join(self.closed, other.closed)
         inc = [i for i in self.incomparables if i in other.incomparables and i not in closed]
         gen = self.generators + other.generators
-
         return Node(closed, inc, gen)
 
     def copy(self):
@@ -92,20 +91,23 @@ def closure_join(brs1, brs2):
 
 
 def generate_coclones_by_antichains(tiles):
-    generators = list(tiles.keys())
+    one_generators = list(tiles.keys())
     one_gen_nodes = {}
     nodes_queue = []
 
-    while generators:
-        g = generators.pop(0)
-        incomparables = [x for x in generators if not (x in tiles[g] or g in tiles[x])]
+    while one_generators:
+        g = one_generators.pop(0)
+        incomparables = [x for x in one_generators if not (x in tiles[g] or g in tiles[x])]
         node = Node(tiles[g], incomparables, [g])
         one_gen_nodes[g] = node
         nodes_queue.append(node.copy())
     
-    coclones = list(tiles.values())
+    coclones = []
+    generators = []
+    for g in tiles:
+        coclones.append(tiles[g])
+        generators.append([g])
 
-    i = 0
     while nodes_queue:
         node = nodes_queue.pop(0)
         while node.incomparables:
@@ -115,10 +117,6 @@ def generate_coclones_by_antichains(tiles):
                 if new_node.incomparables:
                     nodes_queue.append(new_node)
                 coclones.append(new_node.closed)
-                print(len(nodes_queue), len(coclones), len(new_node.generators))
-            else:
-                i += 1
-                if i % 10 == 0:
-                    print(i)
+                generators.append(new_node.generators)
 
-    return coclones 
+    return (coclones, generators) 
