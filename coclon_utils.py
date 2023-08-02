@@ -1,7 +1,7 @@
-
+import logging
 from itertools import product
 
-from binary_relation import bottom_relation,top_relation
+from binary_relation import BinaryRelation, bottom_relation,top_relation
 
 
 class Node(object):
@@ -13,7 +13,10 @@ class Node(object):
     
     def join(self, other):
         closed = closure_join(self.closed, other.closed)
-        inc = [i for i in self.incomparables if i in other.incomparables and i not in closed]
+        inc = [
+            i for i in self.incomparables if 
+            i in other.incomparables and i not in closed
+            ]
         gen = self.generators + other.generators
         return Node(closed, inc, gen)
 
@@ -90,14 +93,16 @@ def closure_join(brs1, brs2):
     return closure_set
 
 
-def generate_coclones_by_antichains(tiles):
+def generate_coclones_from_tiles_by_antichains(tiles):
     one_generators = list(tiles.keys())
     one_gen_nodes = {}
     nodes_queue = []
 
     while one_generators:
         g = one_generators.pop(0)
-        incomparables = [x for x in one_generators if not (x in tiles[g] or g in tiles[x])]
+        incomparables = [
+            x for x in one_generators if not (x in tiles[g] or g in tiles[x])
+            ]
         node = Node(tiles[g], incomparables, [g])
         one_gen_nodes[g] = node
         nodes_queue.append(node.copy())
@@ -120,3 +125,40 @@ def generate_coclones_by_antichains(tiles):
                 generators.append(new_node.generators)
 
     return (coclones, generators) 
+
+
+def gen_coclones(algebra):
+
+    algebra2 = algebra * algebra
+
+    binary_relations = set()
+    tiles = {} # diccionario de losetas (generador: loseta)
+
+    i=0
+    for sub in algebra2.subuniverses(proper=False):
+        br = BinaryRelation(algebra.universe, pairs=sub)
+        binary_relations.add(br)
+        i += 1
+        logging.info("%s : %s %s" % (i, sub, br))
+
+        if br == br.repr_by_T():
+            closure = one_rel_closure(br)
+            if closure not in tiles.values():
+                tiles[br] = closure
+                logging.info("%s : %s" % (i, len(closure)))
+
+
+    logging.info("%s : %s" % (
+        "Cantidad de coclones 1-generados",
+        len(tiles)
+    ))
+
+    (coclones, genrators) = generate_coclones_from_tiles_by_antichains(tiles)
+
+    logging.info("%s : %s" % (
+        "Tamaños de coclones", [len(x) for x in coclones]
+        ))
+    logging.info("%s : %s" % (
+        "Cantidad de coclones", len(coclones)
+        ))
+    return (coclones, genrators)
