@@ -146,6 +146,7 @@ def gen_coclones(algebra):
             if closure not in tiles.values():
                 tiles[br] = closure
                 logging.info("%s : %s" % (i, len(closure)))
+        
 
 
     logging.info("%s : %s" % (
