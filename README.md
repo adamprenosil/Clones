@@ -48,3 +48,10 @@ python algebra_generator_example.py
 Esto nos genera el archivo `Models/exampleAlgebra.model` que tiene el universo en la primer linea y luego la tabla de cada función.
 
 Ahora ya se puede ejecutar el programa 
+
+```bash
+python gen_coclones.py "Models/exampleAlgebra.model"
+```
+
+Una vez que finalice la ejecución, en `logs/exampleAlgebra.model` quedan guardados los logs de la ejecución.
+
