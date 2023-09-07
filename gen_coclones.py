@@ -1,12 +1,9 @@
 import logging
-import json
 import sys
-import os
-from itertools import chain, combinations
 from folpy.utils.parser.parser import Parser
 
-from binary_relation import BinaryRelation
-from coclon_utils import one_rel_closure, gen_coclones
+from coclon_utils import gen_coclones
+from coclon_lattice import draw_coclon_lattice
 
 if __name__ == "__main__":
     path = sys.argv[1]
@@ -21,3 +18,7 @@ if __name__ == "__main__":
     logging.info("Carga de Modelo OK")
 
     (coclones, genrators) = gen_coclones(algebra)
+
+    draw_coclon_lattice(coclones)
+
+
