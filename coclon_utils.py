@@ -1,7 +1,7 @@
 import logging
 from itertools import product
 
-from binary_relation import BinaryRelation, bottom_relation,top_relation
+from binary_relation import BinaryRelation, empty_relation, bottom_relation,top_relation
 
 
 class Node(object):
@@ -57,13 +57,38 @@ def from_file(path):
     return coclones
 
 
+def coclones_to_file(coclones, path):
+    """"
+    Guarda los coclones a un archivo con la siguiente estructura:
+    Coclon 1
+        Rel 1: [(par1), (par2)]
+        Rel 2: ..
+    Coclon 2
+        ...
+    """
+    try:
+        with open(path, 'w') as fp:
+            i = 0
+            for coclon in coclones:
+                i += 1
+                fp.write("Coclon %s \n" % i)
+                j = 0
+                for rel in coclon:
+                    j += 1
+                    fp.write("    Rel %s: %s \n" % (j, rel.list_of_pairs()))
+        return path
+    except e:
+        return e
+
+
 def one_rel_closure(rel):
     """
     Obtiene el conjunto de relaciones binarias que es la clausura de `rel` con 
     las operaciones T, @ y *
     """
     universe = rel.universe
-    initial_set = {bottom_relation(universe), 
+    initial_set = {empty_relation(universe),
+                   bottom_relation(universe), 
                    top_relation(universe)}
 
     return closure_join(initial_set, {rel, rel.T()})
@@ -107,6 +132,8 @@ def generate_coclones_from_tiles_by_antichains(tiles):
         one_gen_nodes[g] = node
         nodes_queue.append(node.copy())
     
+    print("termine one_generators")
+
     coclones = []
     generators = []
     for g in tiles:
@@ -123,6 +150,8 @@ def generate_coclones_from_tiles_by_antichains(tiles):
                     nodes_queue.append(new_node)
                 coclones.append(new_node.closed)
                 generators.append(new_node.generators)
+        print("termine incomparables, quedan %s" % len(nodes_queue))
+        print("vamos %s gens y %s coclons" % (len(generators), len(coclones)))
 
     return (coclones, generators) 
 
@@ -154,7 +183,7 @@ def gen_coclones(algebra):
         len(tiles)
     ))
 
-    (coclones, genrators) = generate_coclones_from_tiles_by_antichains(tiles)
+    (coclones, generators) = generate_coclones_from_tiles_by_antichains(tiles)
 
     logging.info("%s : %s" % (
         "Tamaños de coclones", [len(x) for x in coclones]
@@ -162,4 +191,10 @@ def gen_coclones(algebra):
     logging.info("%s : %s" % (
         "Cantidad de coclones", len(coclones)
         ))
-    return (coclones, genrators)
+    
+    coclones_to_file(
+        generators, 
+        logging.getLoggerClass().root.handlers[0].baseFilename[:-3] + "txt"
+    )
+    
+    return (coclones, generators)
