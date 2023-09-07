@@ -6,7 +6,7 @@ from coclon_utils import gen_coclones
 def operation_preserve_relation(operation, relation):
     """
     Función que decide si una operación preserva una relación.
-    - La operación está dada por una matriz multidemnsional donde cada dimensión
+    - La operación está dada por una matriz multidimensional donde cada dimensión
     es el elemento en el lugar i que se le pasa a la función, y cada elemento 
     de la matriz es el resultado de la función.
     - La relación está dada por una lista de tuplas.
@@ -26,11 +26,15 @@ def find_operation(rels_preserved, rels_not):
     return True
 
 
-def gen_clones(algebra):
+def gen_clones(algebra, coclones_and_generators=None):
     universe = algebra.universe
     assert universe == list(range(len(universe)))
 
-    (coclones, generators) = gen_coclones(algebra)
+    if coclones_and_generators:
+        assert len(coclones_and_generators) == 2
+        (coclones, generators) = coclones_and_generators
+    else:
+        (coclones, generators) = gen_coclones(algebra)
     clones = []
     coclones_indexes = range(len(coclones))
     for i in coclones_indexes:
