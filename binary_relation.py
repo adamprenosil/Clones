@@ -17,9 +17,10 @@ class BinaryRelation(object):
         self.universe = sorted(universe)
         self.universe_card = len(self.universe)
         assert pairs != None or type(matrix) != type(None), "la relación hay que cargarla por la lista de pares o la matriz"
+        self.pairs = pairs
         if type(matrix) != type(None):
             self.matrix = matrix
-        elif pairs:
+        elif isinstance(pairs, list):
             assert isinstance(pairs, list), "La relación se debe pasar como una lista de pares"
             assert all(isinstance(x, tuple) or len(x)==2 for x in pairs), "La relación se debe pasar como una lista de pares"
             self.matrix = numpy.zeros((self.universe_card, self.universe_card), 
@@ -133,7 +134,19 @@ class BinaryRelation(object):
         con json. Guarda la información de la matriz, con la función to_list
         de numpy
         """
-        return self.matrix.to_list()
+        return self.matrix.tolist()
+    
+    def list_of_pairs(self):
+        """
+        Genera la lista de pares a partir de la matriz
+        """
+        if self.pairs:
+            return self.pairs
+        else:
+            pairs = numpy.argwhere(self.matrix).tolist()
+            pairs = [tuple(x) for x in pairs]
+            self.pairs = pairs
+            return pairs
 
 def top_relation(universe):
     pairs = [(a,b) for a in universe for b in universe]
@@ -141,4 +154,8 @@ def top_relation(universe):
 
 def bottom_relation(universe):
     pairs = [(a,a) for a in universe]
+    return BinaryRelation(universe, pairs=pairs)
+
+def empty_relation(universe):
+    pairs = []
     return BinaryRelation(universe, pairs=pairs)
