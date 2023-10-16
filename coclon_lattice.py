@@ -21,7 +21,3 @@ def gen_coclon_lattice(coclones):
         return coclones.index(result)
 
     return Lattice(universe, join, meet)
-
-def draw_coclon_lattice(coclones):
-    lattice = gen_coclon_lattice(coclones)
-    return lattice.draw()
