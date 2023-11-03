@@ -192,9 +192,9 @@ def gen_coclones(algebra):
         "Cantidad de coclones", len(coclones)
         ))
     
-    coclones_to_file(
-        generators, 
-        logging.getLoggerClass().root.handlers[0].baseFilename[:-3] + "txt"
-    )
+    # coclones_to_file(
+    #     generators, 
+    #     logging.getLoggerClass().root.handlers[0].baseFilename[:-3] + "txt"
+    # )
     
     return (coclones, generators)

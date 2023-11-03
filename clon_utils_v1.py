@@ -1,6 +1,7 @@
 import logging
 from itertools import product
 import numpy as np
+import datetime
 
 from coclon_utils import gen_coclones
 
@@ -35,16 +36,6 @@ def op_preserve_relation(operation, relation):
             return False
     return True
 
-def find_operation(rels_preserved, rels_not):
-    """
-    función que dado 2 conjuntos de relaciones A y B, encuentra una operacion f 
-    que preserva las relaciones de A y no preserva las relaciones de B
-    - En el conjunto A alcanza con las relaciones generadoras de lozetas
-    - En el conjunto B alcanza con pasar las relaciones minimales que queremos que
-    no preserve
-    """
-    return True
-
 
 def gen_clones(algebra, coclones_and_generators=None):
     universe = algebra.universe
@@ -65,8 +56,13 @@ def gen_clones(algebra, coclones_and_generators=None):
         coclon = coclones[i]
         binrels_complement = all_binrels - coclon
         generators_i = [g.list_of_pairs() for g in generators[i]]
-        for arity in range(1,3):
+        for arity in range(2,3):
+            contador = 0
+            print(datetime.datetime.now())
             for fun_matrix_tuple in product(universe, repeat=n**arity):
+                contador += 1
+                if contador % 1000000 == 0:
+                    print("cantidad %s: %s" % (contador, datetime.datetime.now()))
                 fun_matrix = np.array(fun_matrix_tuple).reshape(tuple(n for _ in range(arity)))
                 preserve_gens = op_preserve_relations(fun_matrix, generators_i)
                 if not preserve_gens:
@@ -81,6 +77,7 @@ def gen_clones(algebra, coclones_and_generators=None):
                 binrels_complement = binrels_complement - not_preserving_rels
                 if not binrels_complement:
                     clones_finished[i] = True
+                    print("clon finished")
                     break
     
     print(clones_finished)
