@@ -3,7 +3,7 @@ import sys
 from folpy.utils.parser.parser import Parser
 
 from coclon_utils import gen_coclones
-from clon_utils_v2 import gen_clones
+from clon_utils_v4 import gen_clones
 
 if __name__ == "__main__":
     path = sys.argv[1]
