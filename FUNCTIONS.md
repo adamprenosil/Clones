@@ -12,7 +12,7 @@ Line comments must be start with "#". Empty lines are ignored. Example:
 # This file contains the evil model
 ```
 
-### Universe of model
+### Universe
 
 The first line should contain each element of universe separated by a space. Example:
 
@@ -47,3 +47,6 @@ Zero 1
 1 0
 2 0
 ```
+
+
+Here is an example of a file: [DeMorganRhombus](https://github.com/gonzigaran/clausura-M/blob/main/Models/DeMorganRhombus.model)
