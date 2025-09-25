@@ -39,7 +39,7 @@ A operation should start with a declaration line with the name and arity separat
 
 *It must contain exactly the same number of tuples for all the domain of the operation*
 
-A constant operation should be treated as a constant function of arity 1. Example:
+A constant should be treated as a constant function of arity 1. Example:
 
 ```
 Zero 1
