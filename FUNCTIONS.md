@@ -8,13 +8,17 @@ Each set of functions must be in one file.
 
 Line comments must be start with "#". Empty lines are ignored. Example:
 
-```# This file contains the evil model```
+```
+# This file contains the evil model
+```
 
 ### Universe of model
 
 The first line should contain each element of universe separated by a space. Example:
 
-```0 1 2```
+```
+0 1 2
+```
 
 ### Operations
 
