@@ -27,7 +27,8 @@ if __name__ == "__main__":
         )
 
     algebra = Parser(path).parse()
-
+    algebra.name = algebra_name
+    
     logging.info("Carga de Modelo OK")
 
     (coclones, generators) = gen_coclones(algebra)

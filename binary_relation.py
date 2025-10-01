@@ -131,7 +131,7 @@ class BinaryRelation(object):
     def to_list(self):
         """
         Para convertir la relación a una lista, y poder guardarla en el disco
-        con json. Guarda la información de la matriz, con la función to_list
+        con json. Guarda la información de la matriz, con la función tolist
         de numpy
         """
         return self.matrix.tolist()

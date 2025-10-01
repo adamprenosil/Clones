@@ -1,4 +1,5 @@
 import logging
+import json
 from itertools import product
 
 from binary_relation import BinaryRelation, empty_relation, bottom_relation,top_relation
@@ -184,7 +185,9 @@ def gen_coclones(algebra):
                 tiles[br] = closure
                 logging.info("%s : %s" % (i, len(closure)))
         
-
+    binary_relations_list = [br.list_of_pairs() for br in binary_relations]
+    with open("Models/Relations/%s.json" % algebra.name, "w") as fp:
+        json.dump(binary_relations_list, fp)  # encode list into JSON
 
     logging.info("%s : %s" % (
         "Cantidad de coclones 1-generados",
