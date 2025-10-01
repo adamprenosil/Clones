@@ -8,11 +8,20 @@ from coclon_lattice import (gen_coclon_lattice, gen_meet_irr_lattice,
                             gen_join_irr_lattice, 
                             gen_meet_irr_and_join_irr_lattice)
 
+def print_usage():
+    print("Modo de uso:")
+    print("  python gen_coclones.py <ruta_al_modelo>")
+    print("Ejemplo:")
+    print("  python gen_coclones.py 'Models/DM.model'")
+    sys.exit(1)
+
 if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print_usage()
     path = sys.argv[1]
     algebra_name = path[7:-6]
     logging.basicConfig(
-        filename='logs/%s.log' % algebra_name,
+        filename='logs/coclones/%s.log' % algebra_name,
         format='%(asctime)s - %(levelname)s: %(message)s',
         level=logging.DEBUG
         )
@@ -25,11 +34,11 @@ if __name__ == "__main__":
 
     lattice = gen_coclon_lattice(coclones)
     
-    #lattice.draw()
+    lattice.draw()
 
-    #gen_meet_irr_lattice(lattice).draw()
-    #gen_join_irr_lattice(lattice).draw()
-    #gen_meet_irr_and_join_irr_lattice(lattice).draw()
+    gen_meet_irr_lattice(lattice).draw()
+    gen_join_irr_lattice(lattice).draw()
+    gen_meet_irr_and_join_irr_lattice(lattice).draw()
 
     lattice.to_file("Models/CoclonesLattices/%s.model" % algebra_name)
 

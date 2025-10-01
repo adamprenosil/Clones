@@ -97,8 +97,8 @@ def one_rel_closure(rel):
 def closure_join(brs1, brs2):
     """
     Obtiene el conjunto de relaciones binarias que es la clausura de dos 
-    dos conjuntos clausurados de relaciones `brs1` `brs2` con las
-    operaciones T, @ y *
+    conjuntos clausurados de relaciones `brs1` `brs2` con las operaciones 
+    T, @ y *
     """
     initial_set = brs1
     aux_set = brs2.difference(brs1)
@@ -119,6 +119,13 @@ def closure_join(brs1, brs2):
 
 
 def generate_coclones_from_tiles_by_antichains(tiles):
+    """
+    Genera los coclones a partir de las losetas (generadores) y sus
+    relaciones de inclusión. Utiliza un algoritmo de búsqueda por anticadenas.
+    Retorna una lista de coclones y una lista de generadores.
+    """
+    logging.info("Generando coclones a partir de losetas")
+
     one_generators = list(tiles.keys())
     one_gen_nodes = {}
     nodes_queue = []
@@ -132,8 +139,6 @@ def generate_coclones_from_tiles_by_antichains(tiles):
         one_gen_nodes[g] = node
         nodes_queue.append(node.copy())
     
-    print("termine one_generators")
-
     coclones = []
     generators = []
     for g in tiles:
@@ -150,13 +155,16 @@ def generate_coclones_from_tiles_by_antichains(tiles):
                     nodes_queue.append(new_node)
                 coclones.append(new_node.closed)
                 generators.append(new_node.generators)
-        print("termine incomparables, quedan %s" % len(nodes_queue))
+        print("termine incomparables del nodo, quedan %s" % len(nodes_queue))
         print("vamos %s gens y %s coclons" % (len(generators), len(coclones)))
 
     return (coclones, generators) 
 
 
 def gen_coclones(algebra):
+    """
+    Genera los coclones de un álgebra a partir de sus relaciones binarias
+    """
 
     algebra2 = algebra * algebra
 
