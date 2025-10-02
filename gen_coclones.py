@@ -35,12 +35,6 @@ if __name__ == "__main__":
 
     lattice = gen_coclon_lattice(coclones)
     
-    lattice.draw()
-
-    gen_meet_irr_lattice(lattice).draw()
-    gen_join_irr_lattice(lattice).draw()
-    gen_meet_irr_and_join_irr_lattice(lattice).draw()
-
     lattice.to_file("Models/CoclonesLattices/%s.model" % algebra_name)
 
     coclones_dict = {i : [coclon.list_of_pairs() for coclon in coclones[i]] 
@@ -48,5 +42,15 @@ if __name__ == "__main__":
 
     with open("Models/CoclonesUniverses/%s.json" % algebra_name, "w") as fp:
         json.dump(coclones_dict, fp)  # encode dict into JSON
+    
+    
+    lattice.draw()
+
+    gen_meet_irr_lattice(lattice).draw()
+    gen_join_irr_lattice(lattice).draw()
+    gen_meet_irr_and_join_irr_lattice(lattice).draw()
+
+
+    
 
 
