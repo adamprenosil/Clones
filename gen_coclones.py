@@ -46,7 +46,7 @@ if __name__ == "__main__":
     coclones_dict = {i : [coclon.list_of_pairs() for coclon in coclones[i]] 
                      for i in range(len(coclones))}
 
-    with open("Models/Universes/%s.json" % algebra_name, "w") as fp:
+    with open("Models/CoclonesUniverses/%s.json" % algebra_name, "w") as fp:
         json.dump(coclones_dict, fp)  # encode dict into JSON
 
 

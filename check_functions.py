@@ -53,6 +53,20 @@ if __name__ == "__main__":
             logging.info("Relación %s preservada" % rel)
 
     print("Relaciones: %s" % len(relations))
-    print(relations)
     print("Relaciones preservadas: %s" % len(relations_preserved))
-    print(relations_preserved)
+
+    with open("Models/CoclonesUniverses/%s.json" % algebra_name, "r") as fp:
+        coclones = json.load(fp)
+
+    possibles_coclones = []
+    for i in coclones:
+        if all(e in relations_preserved or e == [] for e in coclones[i]):
+            possibles_coclones.append(i)
+    
+    coclon = possibles_coclones[0] if possibles_coclones else None
+    for pc in possibles_coclones:
+        if all(e in coclones[pc] or e == [] for e in coclones[coclon]):
+            coclon = pc
+    
+    print("Coclon: %s" % coclon)
+
