@@ -29,8 +29,8 @@ def op_preserve_relation(operation, relation):
     """
     arity = len(operation.shape)
     for t in product(relation, repeat=arity):
-        tuple_after_op = (operation[tuple(t[i][0] for i in range(arity))],
-                          operation[tuple(t[i][1] for i in range(arity))])
+        tuple_after_op = [operation[tuple(t[i][0] for i in range(arity))],
+                          operation[tuple(t[i][1] for i in range(arity))]]
         preserve_tuple = tuple_after_op in relation
         if not preserve_tuple:
             return False
