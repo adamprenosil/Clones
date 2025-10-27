@@ -5,6 +5,7 @@ from folpy.semantics.modelfunctions import Operation_decorator
 # Creo el tipo del álgebra como un diccionario de 
 # {"nombre de función" : aridad}
 tipo = AlgebraicType({"top": 0, "bottom": 0, "d": 3, "f": 3})
+#tipo = AlgebraicType({"top": 0, "bottom": 0, "d": 3})
 
 # Universo del algebra
 universe = list(range(5))
